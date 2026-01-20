@@ -5,7 +5,7 @@ import random
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
     page_title="AI Fashion Designer",
-    page_icon="👕👚",
+    page_icon="🤵👗",
     layout="centered"
 )
 
@@ -65,7 +65,7 @@ def sustainability_score(fabric):
         return "⭐⭐⭐ Moderate sustainability (warm & durable)"
 
 # ---------------- SIDEBAR ----------------
-st.sidebar.title("👤 Select User")
+st.sidebar.title("👤 User Preferences")
 gender = st.sidebar.radio("Choose Gender", ["Male", "Female"])
 
 # ---------------- MAIN UI ----------------
