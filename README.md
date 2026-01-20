@@ -3,6 +3,7 @@
 AI Fashion Designer is an intelligent fashion recommendation web app that suggests outfits based on user preferences such as gender, occasion, season, and age group — while promoting sustainable fashion 🌱.
 
 🔗 **Live App:** https://ai-fashion-designer-imhchh4p8yz6wqtpyrhwdf.streamlit.app/
+
 📓 **Google Colab Model Notebook:** https://colab.research.google.com/drive/1g8VaH9e1y6q3ZiLLEKdnI6I2Q0eH-pz-?usp=sharing
 
 ---
