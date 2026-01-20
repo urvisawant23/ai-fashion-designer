@@ -2,16 +2,29 @@ import streamlit as st
 import pandas as pd
 import random
 
-# ---------------- DATASET ----------------
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(
+    page_title="AI Fashion Designer",
+    page_icon="👕👚",
+    layout="centered"
+)
+
+# ---------------- DATA ----------------
 occasions = ["Wedding", "Party", "Casual", "Office"]
 seasons = ["Summer", "Winter"]
-genders = ["Male", "Female"]
 
-outfits = {
-    "Wedding": ["Sherwani", "Lehenga", "Saree", "Suit"],
-    "Party": ["Dress", "Kurta Set", "Blazer"],
-    "Casual": ["Jeans & T-shirt", "Kurti", "Top & Jeans"],
-    "Office": ["Formal Shirt & Pants", "Blazer", "Office Saree"]
+male_outfits = {
+    "Wedding": ["Sherwani", "Suit"],
+    "Party": ["Blazer", "Kurta Set"],
+    "Casual": ["Jeans & T-shirt"],
+    "Office": ["Formal Shirt & Pants", "Blazer"]
+}
+
+female_outfits = {
+    "Wedding": ["Lehenga", "Saree"],
+    "Party": ["Dress", "Kurti Set"],
+    "Casual": ["Top & Jeans", "Kurti"],
+    "Office": ["Office Saree", "Formal Dress"]
 }
 
 fabrics = {
@@ -19,91 +32,78 @@ fabrics = {
     "Winter": ["Wool", "Velvet"]
 }
 
-colors = ["Black", "White", "Blue", "Red", "Pastel", "Beige"]
-
-data = []
-for _ in range(300):
-    occ = random.choice(occasions)
-    sea = random.choice(seasons)
-    data.append([
-        occ,
-        sea,
-        random.choice(genders),
-        random.choice(outfits[occ]),
-        random.choice(fabrics[sea]),
-        random.choice(colors)
-    ])
-
-df = pd.DataFrame(data, columns=[
-    "Occasion", "Season", "Gender",
-    "Outfit", "Fabric", "Color"
-])
-
-# ---------------- EXTRA FEATURES ----------------
 color_combinations = {
-    "Black": ["White", "Red", "Beige"],
-    "White": ["Blue", "Pastel", "Black"],
+    "Black": ["White", "Beige"],
+    "White": ["Blue", "Pastel"],
     "Blue": ["White", "Beige"],
     "Red": ["Black", "White"],
     "Pastel": ["White", "Beige"],
-    "Beige": ["Brown", "White"]
+    "Beige": ["White", "Brown"]
 }
 
-def fashion_trends(age):
+colors = list(color_combinations.keys())
+
+# ---------------- FUNCTIONS ----------------
+def outfit_description(outfit, occasion, season):
+    return (
+        f"A stylish **{outfit}** designed for **{occasion.lower()} occasions**, "
+        f"crafted to keep you comfortable and elegant during **{season.lower()}**."
+    )
+
+def fashion_trend(age):
     if age == "Teen":
-        return "Trendy outfits with vibrant colors and modern styles are popular."
+        return "Bright colors and trendy silhouettes are popular among teens."
     elif age == "Adult":
-        return "Minimal designs with neutral and elegant shades are trending."
+        return "Minimal designs with balanced colors are trending."
     else:
-        return "Comfortable, classy, and easy-to-wear outfits are recommended."
+        return "Elegant, comfortable, and timeless styles are preferred."
 
-def sustainable_tips(season):
-    if season == "Summer":
-        return [
-            "Prefer breathable fabrics like cotton and linen",
-            "Choose light colors to reduce heat absorption",
-            "Avoid excessive synthetic materials"
-        ]
+def sustainability_score(fabric):
+    if fabric in ["Cotton", "Linen"]:
+        return "⭐⭐⭐⭐⭐ Excellent eco-friendly choice"
     else:
-        return [
-            "Opt for wool and layered clothing",
-            "Reuse winter wear across seasons",
-            "Choose durable fabrics to reduce waste"
-        ]
+        return "⭐⭐⭐ Moderate sustainability (warm & durable)"
 
-# ---------------- STREAMLIT UI ----------------
-st.set_page_config(page_title="AI Fashion Designer", layout="centered")
+# ---------------- SIDEBAR ----------------
+st.sidebar.title("👤 Select User")
+gender = st.sidebar.radio("Choose Gender", ["Male", "Female"])
 
+# ---------------- MAIN UI ----------------
 st.title("👗 AI Fashion Designer")
-st.write("An AI-based system that recommends outfits based on user preferences.")
+st.write("Smart outfit recommendations based on fashion logic and sustainability 🌱")
 
 occasion = st.selectbox("Select Occasion", occasions)
 season = st.selectbox("Select Season", seasons)
-gender = st.selectbox("Select Gender", genders)
 age_group = st.selectbox("Select Age Group", ["Teen", "Adult", "Senior"])
 
-if st.button("Get Outfit Recommendation"):
-    result = df[
-        (df["Occasion"] == occasion) &
-        (df["Season"] == season) &
-        (df["Gender"] == gender)
-    ].sample(1).iloc[0]
+if st.button("✨ Get Outfit Recommendation"):
+    outfit_pool = male_outfits if gender == "Male" else female_outfits
 
-    st.success("👕 Outfit Recommendation")
-    st.write("**Outfit:**", result["Outfit"])
-    st.write("**Fabric:**", result["Fabric"])
-    st.write("**Color:**", result["Color"])
+    outfit = random.choice(outfit_pool[occasion])
+    fabric = random.choice(fabrics[season])
+    color = random.choice(colors)
 
-    st.info("🎨 Color Combinations")
-    combos = color_combinations.get(result["Color"], [])
-    if combos:
-        st.write(", ".join(combos))
-    else:
-        st.write("No suggestions available")
+    st.success("👕 Recommended Outfit")
+    st.markdown(f"**Outfit:** {outfit}")
+    st.markdown(f"**Fabric:** {fabric}")
+    st.markdown(f"**Primary Color:** {color}")
 
+    # Description
+    st.info("📝 Outfit Description")
+    st.write(outfit_description(outfit, occasion, season))
+
+    # Color Combinations
+    st.info("🎨 Best Color Combinations")
+    for c in color_combinations[color]:
+        st.write(f"• {c}")
+
+    # Fashion Trend
     st.warning("🔥 Fashion Trend Tip")
-    st.write(fashion_trends(age_group))
+    st.write(fashion_trend(age_group))
 
-    st.success("🌱 Sustainable Fashion Tips")
-    for tip in sustainable_tips(season):
-        st.write(f"- {tip}")
+    # Sustainability
+    st.success("🌱 Sustainability Score")
+    st.write(sustainability_score(fabric))
+    st.write("✔ Prefer natural fabrics")
+    st.write("✔ Avoid fast fashion")
+    st.write("✔ Reuse & recycle clothing")
