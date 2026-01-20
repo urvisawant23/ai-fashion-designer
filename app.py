@@ -23,12 +23,14 @@ colors = ["Black", "White", "Blue", "Red", "Pastel", "Beige"]
 
 data = []
 for _ in range(300):
+    occ = random.choice(occasions)
+    sea = random.choice(seasons)
     data.append([
-        random.choice(occasions),
-        random.choice(seasons),
+        occ,
+        sea,
         random.choice(genders),
-        random.choice(outfits[random.choice(occasions)]),
-        random.choice(fabrics[random.choice(seasons)]),
+        random.choice(outfits[occ]),
+        random.choice(fabrics[sea]),
         random.choice(colors)
     ])
 
@@ -49,11 +51,25 @@ color_combinations = {
 
 def fashion_trends(age):
     if age == "Teen":
-        return "Trendy outfits with bright colors are popular."
+        return "Trendy outfits with vibrant colors and modern styles are popular."
     elif age == "Adult":
-        return "Minimal designs and neutral shades are trending."
+        return "Minimal designs with neutral and elegant shades are trending."
     else:
-        return "Comfortable and elegant styles are recommended."
+        return "Comfortable, classy, and easy-to-wear outfits are recommended."
+
+def sustainable_tips(season):
+    if season == "Summer":
+        return [
+            "Prefer breathable fabrics like cotton and linen",
+            "Choose light colors to reduce heat absorption",
+            "Avoid excessive synthetic materials"
+        ]
+    else:
+        return [
+            "Opt for wool and layered clothing",
+            "Reuse winter wear across seasons",
+            "Choose durable fabrics to reduce waste"
+        ]
 
 # ---------------- STREAMLIT UI ----------------
 st.set_page_config(page_title="AI Fashion Designer", layout="centered")
@@ -79,12 +95,15 @@ if st.button("Get Outfit Recommendation"):
     st.write("**Color:**", result["Color"])
 
     st.info("🎨 Color Combinations")
-    st.write(color_combinations.get(result["Color"], "No suggestions available"))
+    combos = color_combinations.get(result["Color"], [])
+    if combos:
+        st.write(", ".join(combos))
+    else:
+        st.write("No suggestions available")
 
     st.warning("🔥 Fashion Trend Tip")
     st.write(fashion_trends(age_group))
 
     st.success("🌱 Sustainable Fashion Tips")
-    st.write("- Prefer cotton and linen fabrics")
-    st.write("- Reuse and recycle clothes")
-    st.write("- Avoid fast fashion")
+    for tip in sustainable_tips(season):
+        st.write(f"- {tip}")
